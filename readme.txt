@@ -1,3 +1,3 @@
-Git 初学-廖雪峰大神敬上
+用Git记录sql学习过程
 2019.06.16
 SELECT Date(Now())
