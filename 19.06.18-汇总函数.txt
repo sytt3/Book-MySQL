@@ -1,0 +1,75 @@
+19.06.18
+汇总数据
+常用的统计函数
+AVG()     返回某列平均值
+MIN()     返回某列的最小值
+MAX()     返回某列的最大值
+COUNT()   计数共多少行
+SUM()     求某列的和
+
+mysql> SELECT prod_price AS pp,
+    -> AVG(prod_price) AS price_ave,
+    -> MIN(prod_price) AS price_min,
+    -> MAX(prod_price) AS price_max,
+    -> SUM(prod_price) AS price_sum,
+    -> COUNT(prod_price) AS price_lines
+    -> FROM products;
++------+-----------+-----------+-----------+-----------+-------------+
+| pp   | price_ave | price_min | price_max | price_sum | price_lines |
++------+-----------+-----------+-----------+-----------+-------------+
+| 5.99 | 16.133571 |      2.50 |     55.00 |    225.87 |          14 |
++------+-----------+-----------+-----------+-----------+-------------+
+
+此处SELECT prod_price AS pp,应该是返回多行值的，但是由于后续只有一个值被屏蔽了
+mysql> SELECT prod_price FROM products;
++------------+
+| prod_price |
++------------+
+|       5.99 |
+|       9.99 |
+|      14.99 |
+|      13.00 |
+|      10.00 |
+|       2.50 |
+|       3.42 |
+|      35.00 |
+|      55.00 |
+|       8.99 |
+|      50.00 |
+|       4.49 |
+|       2.50 |
+|      10.00 |
++------------+
+
+注意：COUNT()函数有一个特点，如果COUNT(*)会计算包括空值NULL的行，但是指定列名之后就会计算非空值行
+
+DISTINCT 关键字，去除重复项
+SELECT DISTINCT prod_price AS price_d FROM products;
++---------+
+| price_d |
++---------+
+|    5.99 |
+|    9.99 |
+|   14.99 |
+|   13.00 |
+|   10.00 |
+|    2.50 |
+|    3.42 |
+|   35.00 |
+|   55.00 |
+|    8.99 |
+|   50.00 |
+|    4.49 |
++---------+
+12 rows in set (0.00 sec)
+
+SELECT COUNT(prod_price) AS price_all,
+    -> COUNT(DISTINCT prod_price) AS price_dis
+    -> FROM products;
++-----------+-----------+
+| price_all | price_dis |
++-----------+-----------+
+|        14 |        12 |
++-----------+-----------+
+其中2.50和10.00是重复项
+
