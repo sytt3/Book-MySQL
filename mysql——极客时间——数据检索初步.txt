@@ -1,0 +1,12 @@
+mysql——极客时间——数据检索初步
+开课就丢出一个坑，作者创建了一个sql文件，填写数据库的，结果里面使用的全是insert函数，只有插入值的功能，要自己建表
+eg：INSERT INTO `heros` VALUES (10001, '閽熸棤鑹?, 7000, 275, 3150, 1760, 95, 430, 318, 11, 164, 409, 22, 100, 92, 3, 48, 37, 2, 15, 0, 0, '鎴樺＋', '鍧﹀厠', NULL);
+没有去用SQL语句DDL建表，直接用navicat建表，有很多数值类型设计的问题由于作者没细说，没有是int还是float，几位小数——坑
+然后讲的很常规了，在《mysql必知必会》里面都提过了，但是SQL执行的顺序需要了解一下
+FROM>WHERE>GROUP BY>HAVING>SELECT 字段>DISTINCT>ORDER BY>LIMIT>DBMS自带函数
+
+另外作者提了一下JOIN这个关键字，
+网上搜了一下了解到
+JOIN ...ON ...
+是该这么用的，另外JOIN还有LEFT JOIN 以及RIGHT JOIN这两种用法
+后面必知必会上慢慢来搞
