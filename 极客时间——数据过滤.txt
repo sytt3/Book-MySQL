@@ -1,0 +1,12 @@
+极客时间——数据过滤
+三种符号
+1.比较符号：>,<=，！=，IS NULL,NOT
+2.逻辑运算符：AND,OR,BETWEEN...AND...
+3.通配符：%，_
+
+通配符是在关键字LIKE之后使用的
+同一个值多个OR时，直接使用IN()就行，不要傻BB的用成 name='Tom' OR name='Jike' OR name='Jion'
+直接用 name IN('Tom','Jike','Jion')这样就行了
+也不要自己这创建语法，name='Tom' OR 'Jike' OR 'Jion' 这条我是真的这样干过，这是不行的，你不是MySQL的开发者
+
+有机会好好复习文本匹配问题，LIKE,REGEXP
