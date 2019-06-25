@@ -1,0 +1,90 @@
+分组数据 GROUP BY
+以指定组的方式进行数据运算
+分组运算规定：
+1.GROUP BY子句可以包含任意数目的列，使得分组里面还能再分组，从子句的最后一个开始选择
+2.GROUP BY子句嵌套了分组，数据将在最后规定的分组上进行汇总，即不能从个别列取回数据
+3.GROUP BY子句中列出的每个列都必须是检索列或有效的表达式，不能使用别名
+4.除聚集计算语句外，SELECT语句中的每个列需要在GROUP BY子句中给出，否则就会变成去除重复项了。
+mysql> SELECT vend_id,prod_price,prod_name
+    -> FROM products;
++---------+------------+----------------+
+| vend_id | prod_price | prod_name      |
++---------+------------+----------------+
+|    1001 |       5.99 | .5 ton anvil   |
+|    1001 |       9.99 | 1 ton anvil    |
+|    1001 |      14.99 | 2 ton anvil    |
+|    1003 |      13.00 | Detonator      |
+|    1003 |      10.00 | Bird seed      |
+|    1003 |       2.50 | Carrots        |
+|    1002 |       3.42 | Fuses          |
+|    1005 |      35.00 | JetPack 1000   |
+|    1005 |      55.00 | JetPack 2000   |
+|    1002 |       8.99 | Oil can        |
+|    1003 |      50.00 | Safe           |
+|    1003 |       4.49 | Sling          |
+|    1003 |       2.50 | TNT (1 stick)  |
+|    1003 |      10.00 | TNT (5 sticks) |
++---------+------------+----------------+
+14 rows in set (0.33 sec)
+
+mysql> SELECT vend_id,prod_price,prod_name
+    -> FROM products
+    -> GROUP BY vend_id;
++---------+------------+--------------+
+| vend_id | prod_price | prod_name    |
++---------+------------+--------------+
+|    1001 |       5.99 | .5 ton anvil |
+|    1002 |       3.42 | Fuses        |
+|    1003 |      13.00 | Detonator    |
+|    1005 |      35.00 | JetPack 1000 |
++---------+------------+--------------+
+5.分组列中具有NULL值，则NULL将作为一个分组返回，如果列中出现多行NULL值，将分为一组。
+6.GROUP BY 子句必须出现在WHERE子句之后，ORDER BY子句前
+
+以上六条为GROUP BY真理细细体会，否则GROUP BY只是还未入门
+
+mysql> SELECT vend_id,COUNT(*)
+    -> FROM products
+    -> GROUP BY vend_id WITH ROLLUP;
++---------+----------+
+| vend_id | COUNT(*) |
++---------+----------+
+|    1001 |        3 |
+|    1002 |        2 |
+|    1003 |        7 |
+|    1005 |        2 |
+|    NULL |       14 |
++---------+----------+
+ROLLUP关键字将会对前面的汇总函数进行再次汇总
+
+WHERE 和HAVING的顺序
+WHERE优先级>HAVING
+mysql> SELECT vend_id,COUNT(*)
+    -> FROM products
+    -> GROUP BY vend_id
+    -> HAVING COUNT(*)>2;
++---------+----------+
+| vend_id | COUNT(*) |
++---------+----------+
+|    1001 |        3 |
+|    1003 |        7 |
++---------+----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT vend_id,COUNT(*)
+    -> FROM products
+    -> WHERE prod_price>=10
+    -> GROUP BY vend_id
+    -> HAVING COUNT(*)>2;
++---------+----------+
+| vend_id | COUNT(*) |
++---------+----------+
+|    1003 |        4 |
++---------+----------+
+1 row in set (0.00 sec)
+WHERE先过滤了prod_price<10的行
+导致只有1003只有4个了，1001的3个产品价格都不超过10
+
+顺序：SELECT>FROM>WHERE>GROUP BY>HAVING>ORDER BY>LIMIT
+
+GROUP BY 会按照某一列进行排序，但是最好还是用ORDER BY来进行约束性的排序
