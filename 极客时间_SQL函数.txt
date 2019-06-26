@@ -1,0 +1,11 @@
+SQL函数在不同DBMS中，要求不同，过分使用SQL函数将会导致兼容性差，移植性差
+内置函数分为四类
+1.算数函数
+2.日期类函数
+3.字符串类函数
+4.转换函数
+转换函数接触的少，有两种：CAST()，COALESCE()返回第一个非空数值
+搜索最大值所对应的行，现在有个很麻瓜的方法
+SELECT * FROM heros
+WHERE hp_max=(SELECT max(hp_max) FROM heros);
+此处必须应用SELECT 子句来查询max（hp_max)值
