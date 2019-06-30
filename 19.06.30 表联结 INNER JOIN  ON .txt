@@ -1,0 +1,58 @@
+19.06.30 表联结 INNER JOIN  ON
+MySQL可以通过表联结产生一个新的虚拟表，然后检索出想要的一个汇总表
+比如：将vendors中的vend_name 和 products中的prod_name,prod_price同时检索出来时
+有两种方式
+1.SELECT 子查询：products.name & prod_price & products.vend_id ---->vendors.vend_id ---->vendors.vend_name
+mysql> SELECT prod_name,prod_price,
+    -> (SELECT vend_name FROM vendors
+    -> WHERE vendors.vend_id = products.vend_id) AS vend_name
+    -> FROM products
+    -> ORDER  BY vend_name,prod_name;
++----------------+------------+-------------+
+| prod_name      | prod_price | vend_name   |
++----------------+------------+-------------+
+| Bird seed      |      10.00 | ACME        |
+| Carrots        |       2.50 | ACME        |
+| Detonator      |      13.00 | ACME        |
+| Safe           |      50.00 | ACME        |
+| Sling          |       4.49 | ACME        |
+| TNT (1 stick)  |       2.50 | ACME        |
+| TNT (5 sticks) |      10.00 | ACME        |
+| .5 ton anvil   |       5.99 | Anvils R Us |
+| 1 ton anvil    |       9.99 | Anvils R Us |
+| 2 ton anvil    |      14.99 | Anvils R Us |
+| JetPack 1000   |      35.00 | Jet Set     |
+| JetPack 2000   |      55.00 | Jet Set     |
+| Fuses          |       3.42 | LT Supplies |
+| Oil can        |       8.99 | LT Supplies |
++----------------+------------+-------------+
+14 rows in set (0.00 sec)
+
+2.表联结：将vendors表和products表联结起来，再检索想要的列
+mysql> SELECT vend_name,prod_name,prod_price
+    -> FROM vendors INNER JOIN products
+    -> ON vendors.vend_id = products.vend_id
+    -> ORDER BY vend_name,prod_name;
++-------------+----------------+------------+
+| vend_name   | prod_name      | prod_price |
++-------------+----------------+------------+
+| ACME        | Bird seed      |      10.00 |
+| ACME        | Carrots        |       2.50 |
+| ACME        | Detonator      |      13.00 |
+| ACME        | Safe           |      50.00 |
+| ACME        | Sling          |       4.49 |
+| ACME        | TNT (1 stick)  |       2.50 |
+| ACME        | TNT (5 sticks) |      10.00 |
+| Anvils R Us | .5 ton anvil   |       5.99 |
+| Anvils R Us | 1 ton anvil    |       9.99 |
+| Anvils R Us | 2 ton anvil    |      14.99 |
+| Jet Set     | JetPack 1000   |      35.00 |
+| Jet Set     | JetPack 2000   |      55.00 |
+| LT Supplies | Fuses          |       3.42 |
+| LT Supplies | Oil can        |       8.99 |
++-------------+----------------+------------+
+14 rows in set (0.00 sec)
+
+当然表联结可以同时联结多个表，用AND穿插就好
+
+问题：什么时候该用表联结来做检索，什么时候直接使用SELECT子查询就可以了？怎么区分性能？
