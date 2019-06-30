@@ -1,0 +1,43 @@
+19.06.30 SELECT子句
+使用格式，为便于他人查看语句，知道是什么格式，认为规范了一种格式，即使不使用也不会有什么事，但是代码是需要用来沟通的
+就像关键字需要大写一样
+
+一：利用子句查询进行过滤
+mysql> SELECT cust_name FROM customers
+    -> WHERE cust_id IN (SELECT cust_id FROM orders
+    ->                  WHERE order_num IN(SELECT order_num FROM orderitems
+    ->                                    WHERE prod_id='TNT2'));
++----------------+
+| cust_name      |
++----------------+
+| Coyote Inc.    |
+| Yosemite Place |
++----------------+
+
+通常FROM子句也可占用一行
+
+
+PS：对于能嵌套的子查询的数目没有限制，不过在实际使用时由于性能的限制，不能嵌套太多的子查询
+
+二：作为计算字段使用子查询，可做到分组计算的效果
+放在FROM之前
+功能：计算在customers表中的顾客名，在orders表中下过几次单
+过程：查看与同在customers表中cust_name 的cust_id在orders中出现了几次
+mysql> SELECT cust_name,(SELECT COUNT(*) FROM  orders
+    ->                  WHERE orders.cust_id=customers.cust_id) AS orders
+    -> FROM customers
+    -> ORDER BY cust_name;
++----------------+--------+
+| cust_name      | orders |
++----------------+--------+
+| Coyote Inc.    |      2 |
+| E Fudd         |      1 |
+| Mouse House    |      0 |
+| Wascals        |      1 |
+| Yosemite Place |      1 |
++----------------+--------+
+5 rows in set (0.00 sec)
+
+行级检索：
+customer.name & customers.cust_id---->限定检索orders中的cust_id---->聚集计算此时orders中的行数
+
