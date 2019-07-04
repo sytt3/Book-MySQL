@@ -1,0 +1,66 @@
+19.07.05 极客时间——表联结
+联结方式
+1.笛卡尔积
+2.等值联结
+3.非等值联结
+4.外部联结
+5.自联结
+
+一：笛卡尔积是一种联结方式，表示数据相乘
+假设A,B为表
+A
+a b c
+
+B
+1 2 3
+
+SELECT * FROM A,B
+a 1
+a 2
+a 3
+b 1
+b 2
+b 3
+c 1
+c 2
+c 3
+笛卡尔积就是这种联结方式 
+
+二：等值联结\非等值联结
+即联结时，判定的列的行数是否一样
+
+下面是非等值联结：有点像选值填数
+SELECT a.name,a.height,b.height_level
+FROM player AS a,height_grades AS b
+WHERE a.height BETWEEN b.lowest AND b.heightest;
+
+三：外部联结\内部联结
+记得关键字 JOIN ON
+RIGHT JOIN
+LEFT JOIN
+左联结、右联结表示选择哪一个表为主表
+通常联结时可以选择CONCAT（）函数来联结列
+用习题来表示
+使用一条SQL语句来表示3只队伍的可能场次数
+1.分主客厂
+SELECT CONCAT(a.team_name,'-',b.team_name) AS against
+FROM team AS a,team AS b
+WHERE a.team_id != b.team_id
+
+2.不分主客场
+ SELECT CONCAT(a.team_name,'-',b.team_name) AS against
+    -> FROM team AS a,team AS b
+    -> WHERE a.team_id < b.team_id;
++-----------------------------+
+| against                     |
++-----------------------------+
+| 底特律活塞-印第安纳步行者   |
+| 底特律活塞-亚特兰大老鹰     |
+| 印第安纳步行者-亚特兰大老鹰 |
++-----------------------------+
+3 rows in set (0.00 sec)
+
+注意下此处'<'的妙用，这样直接去掉了重复项，只轮回一次
+
+NBA数据库地址
+https://github.com/cystanford/sql_nba_data
