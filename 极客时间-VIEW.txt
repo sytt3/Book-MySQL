@@ -1,0 +1,137 @@
+CREATE VIEW view_name AS
+SELECT * FROM tables
+WHERE condition
+
+一：创建视图VIEW  CREATE
+---------------
+mysql> DROP VIEW  above_avg_height;
+ERROR 1051 (42S02): Unknown table 'nba.above_avg_height'
+mysql> CREATE VIEW above_avg_height AS
+    -> SELECT player_id,height
+    -> FROM player
+    -> WHERE height > (SELECT AVG(height) FROM player);
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> SELECT * FROM above_avg_height;
++-----------+--------+
+| player_id | height |
++-----------+--------+
+|     10003 |   2.11 |
+|     10004 |   2.16 |
+|     10009 |   2.11 |
+|     10010 |   2.08 |
+|     10011 |   2.08 |
+|     10012 |   2.01 |
+|     10014 |   2.01 |
+|     10015 |   2.11 |
+|     10018 |   2.03 |
+|     10022 |   2.03 |
+|     10023 |   2.11 |
+|     10024 |   2.11 |
+|     10025 |   2.03 |
+|     10029 |   2.03 |
+|     10032 |   2.08 |
+|     10033 |   2.08 |
+|     10036 |   2.06 |
+|     10037 |   2.08 |
++-----------+--------+
+18 rows in set (0.04 sec)
+------------------
+创建视图，实际上算是一个tables，只不过有不同的是，无法修改底层数据，建立一个视图和建一个表的语法差不多
+CREATE VIEW 记得带上VIEW关键字 并用AS作为封装的开始
+封装下面的查询语句
+
+二：修改视图VIEW ALTER
+
+---------------------------------
+mysql> ALTER VIEW above_avg_height AS
+    -> SELECT a.palyer_id,a.height,b.player_name
+    -> FROM above_avg_height AS a,player AS b
+    -> WHERE a.player_id=b.player_id;
+ERROR 1146 (42S02): Table 'nba.above_avg_height' doesn't exist
+mysql> SELECT * FROM above_avg_height;
++-----------+--------+
+| player_id | height |
++-----------+--------+
+|     10003 |   2.11 |
+|     10004 |   2.16 |
+|     10009 |   2.11 |
+|     10010 |   2.08 |
+|     10011 |   2.08 |
+|     10012 |   2.01 |
+|     10014 |   2.01 |
+|     10015 |   2.11 |
+|     10018 |   2.03 |
+|     10022 |   2.03 |
+|     10023 |   2.11 |
+|     10024 |   2.11 |
+|     10025 |   2.03 |
+|     10029 |   2.03 |
+|     10032 |   2.08 |
+|     10033 |   2.08 |
+|     10036 |   2.06 |
+|     10037 |   2.08 |
++-----------+--------+
+18 rows in set (0.00 sec)
+-------------------------------------
+修改视图时无法再次调用该视图，直接找不到这个视图
+建表，检索时，是可以的
+
+------------------------------------
+mysql> ALTER VIEW above_avg_height AS
+    -> SELECT player_name,player_id,height
+    -> FROM player
+    -> WHERE height > (SELECT AVG(height) FROM player);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> SELECT * FROM above_avg_height;
++-------------------------+-----------+--------+
+| player_name             | player_id | height |
++-------------------------+-----------+--------+
+| 安德烈-德拉蒙德         |     10003 |   2.11 |
+| 索恩-马克               |     10004 |   2.16 |
+| 扎扎-帕楚里亚           |     10009 |   2.11 |
+| 乔恩-洛伊尔             |     10010 |   2.08 |
+| 布雷克-格里芬           |     10011 |   2.08 |
+| 雷吉-巴洛克             |     10012 |   2.01 |
+| 斯坦利-约翰逊           |     10014 |   2.01 |
+| 亨利-埃伦森             |     10015 |   2.11 |
+| 斯维亚托斯拉夫-米凯卢克 |     10018 |   2.03 |
+| 博扬-博格达诺维奇       |     10022 |   2.03 |
+| 多曼塔斯-萨博尼斯       |     10023 |   2.11 |
+| 迈尔斯-特纳             |     10024 |   2.11 |
+| 赛迪斯-杨               |     10025 |   2.03 |
+| 道格-迈克德莫特         |     10029 |   2.03 |
+| TJ-利夫                 |     10032 |   2.08 |
+| 凯尔-奥奎因             |     10033 |   2.08 |
+| 阿利兹-约翰逊           |     10036 |   2.06 |
+| Ike Anigbogu            |     10037 |   2.08 |
++-------------------------+-----------+--------+
+18 rows in set (0.02 sec)
+------------------------------------
+
+三：删除视图 DROP
+DROP view view_name
+
+四：视图封装
+1.非等值连接
+2.格式化输出
+--------------------------------------------
+mysql> CREATE VIEW player_team AS
+    -> SELECT CONCAT(p.player_name,'(',t.team_name,')')
+    -> FROM player AS p JOIN team AS t ON p.team_id = t.team_id;
+Query OK, 0 rows affected (0.17 sec)
+
+mysql> SELECT * FROM player_team
+    -> LIMIT 5;
++-------------------------------------------+
+| CONCAT(p.player_name,'(',t.team_name,')') |
++-------------------------------------------+
+| 韦恩-艾灵顿(底特律活塞)                   |
+| 雷吉-杰克逊(底特律活塞)                   |
+| 安德烈-德拉蒙德(底特律活塞)               |
+| 索恩-马克(底特律活塞)                     |
+| 布鲁斯-布朗(底特律活塞)                   |
++-------------------------------------------+
+5 rows in set (0.00 sec)
+------------------------------------------------
